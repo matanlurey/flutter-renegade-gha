@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [main]
 
+  # Cron job: Every 15m.
+  schedule:
+    - cron: "*/15 * * * *"
+
 jobs:
   test:
     runs-on: ubuntu-latest
