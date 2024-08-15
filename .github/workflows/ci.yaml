@@ -26,6 +26,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
+          arch: "x86_64"
           script: |
             cd flutter
             SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
