@@ -27,6 +27,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           arch: "x86_64"
+          target: google_apis
           script: |
             cd flutter
             SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
