@@ -20,7 +20,7 @@ if [ -n "$GITHUB_ACTIONS" ]; then
 
   # Update paths
   echo "${FLUTTER_PUB_CACHE}/bin" >>$GITHUB_PATH
-  echo "flutter/bin" >>$GITHUB_PATH
+  echo "${GITHUB_WORKSPACE}/flutter/bin" >>$GITHUB_PATH
 
   # Install the Flutter SDK.
   flutter config --clear-features --no-analytics --no-cli-animations
