@@ -16,17 +16,6 @@ git clone --depth 1 --branch \
 
 # If we are running on Github actions, we have extra steps.
 if [ -n "$GITHUB_ACTIONS" ]; then
-  # Configure pub to use a fixed cache directory.
-  FLUTTER_PUB_CACHE="${RUNNER_TEMP}/pub-cache"
-  echo "PUB_CACHE=${FLUTTER_PUB_CACHE}" >>$GITHUB_ENV
-
-  # Update paths
-  echo "${FLUTTER_PUB_CACHE}/bin" >>$GITHUB_PATH
-  echo "${GITHUB_WORKSPACE}/flutter/bin" >>$GITHUB_PATH
-
-  # Echo path for lolz.
-  echo "PATH: ${GITHUB_PATH}"
-
   # Install the Flutter SDK.
   flutter config --clear-features --no-analytics --no-cli-animations
 else

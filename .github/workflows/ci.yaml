@@ -23,6 +23,8 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Setup PATH
+        run: echo "export PATH=\$PATH:${{github.workspace}}/flutter/bin" >> $GITHUB_ENV
       - name: Install Flutter
         run: ./install-flutter.sh
       - name: Flutter Doctor
