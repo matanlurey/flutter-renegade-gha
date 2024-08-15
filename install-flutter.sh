@@ -12,10 +12,6 @@ git clone --depth 1 --branch \
   try-crash-driver-ci \
   https://github.com/matanlurey/flutter
 
-# Set an alias for local users.
-alias dart=./flutter/bin/dart
-alias flutter=./flutter/bin/flutter
-
 # If we are running on Github actions, we have extra steps.
 if [ -n "$GITHUB_ACTIONS" ]; then
   # Configure pub to use a fixed cache directory.
@@ -29,6 +25,9 @@ if [ -n "$GITHUB_ACTIONS" ]; then
   # Install the Flutter SDK.
   flutter config --clear-features --no-analytics --no-cli-animations
 else
+  # Set an alias for local users.
+  alias dart=./flutter/bin/dart
+  alias flutter=./flutter/bin/flutter
   flutter config --clear-features
 fi
 
