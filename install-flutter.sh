@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 # Cloning a forked repo fails with obscure errors without pretending to be
 # a known version of Flutter. https://github.com/flutter/flutter/issues/148569.
 FAKE_FLUTTER_VERISON="3.24.0"
@@ -21,6 +23,9 @@ if [ -n "$GITHUB_ACTIONS" ]; then
   # Update paths
   echo "${FLUTTER_PUB_CACHE}/bin" >>$GITHUB_PATH
   echo "${GITHUB_WORKSPACE}/flutter/bin" >>$GITHUB_PATH
+
+  # Echo path for lolz.
+  echo "PATH: ${GITHUB_PATH}"
 
   # Install the Flutter SDK.
   flutter config --clear-features --no-analytics --no-cli-animations
