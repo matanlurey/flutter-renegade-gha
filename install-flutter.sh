@@ -39,7 +39,7 @@ flutter --version
 # ./flutter/bin/cache/flutter.version.json
 # change flutterVersion": "0.0.0-unknown"
 #     to flutterVersion": "$FAKE_FLUTTER_VERISON"
-sed -i '' "s/0.0.0-unknown/${FAKE_FLUTTER_VERISON}/g" ./flutter/bin/cache/flutter.version.json
+sed -i "s/0.0.0-unknown/${FAKE_FLUTTER_VERISON}/g" ./flutter/bin/cache/flutter.version.json
 
 # Download dependencies.
 flutter update-packages
