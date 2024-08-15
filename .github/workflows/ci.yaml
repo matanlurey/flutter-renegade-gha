@@ -15,11 +15,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on:
+      - ubuntu-latest
+      - macos-latest
     strategy:
       fail-fast: false
       matrix:
         api-level: [34, 35]
+        target: [default, google_apis]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,11 +30,22 @@ jobs:
         with:
           distribution: "zulu"
           java-version: 21
-      - name: Enable Hardware Acceleration
+      - name: Enable Hardware Acceleration on Linux
+        if: runner.os == 'Linux'
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Cache Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Cache AVD
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ runner.os }}
       - name: Setup PATH
         run: |
           echo "export PATH=\$PATH:${{github.workspace}}/flutter/bin" >> $GITHUB_PATH
@@ -40,11 +54,34 @@ jobs:
         run: ./install-flutter.sh
       - name: Flutter Doctor
         run: flutter doctor
+      - name: Install and Cache AVD
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: "x86_64"
+          target: ${{ matrix.target }}
+          script: echo "Generated AVD snapshot for caching."
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
       - name: Run Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
           working-directory: flutter
           arch: "x86_64"
-          target: google_apis
-          script: SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
+          target: ${{ matrix.target }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            adb logcat -c
+            adb logcat > logcat.log &
+            SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
+      - name: Upload Logcat
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: logcat-${{ matrix.api-level }}-${{ matrix.target }}-${{ runner.os }}
+          path: logcat.log
