@@ -24,7 +24,9 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Setup PATH
-        run: echo "export PATH=\$PATH:${{github.workspace}}/flutter/bin" >> $GITHUB_ENV
+        run: |
+          echo "export PATH=\$PATH:${{github.workspace}}/flutter/bin" >> $GITHUB_ENV
+          echo "PATH: $PATH"
       - name: Install Flutter
         run: ./install-flutter.sh
       - name: Flutter Doctor
