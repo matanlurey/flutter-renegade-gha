@@ -18,6 +18,8 @@ alias flutter=./flutter/bin/flutter
 
 # If we are running on Github actions, we have extra steps.
 if [ -n "$GITHUB_ACTIONS" ]; then
+  FLUTTER_RUNNER_TOOL_CACHE="${RUNNER_TOOL_CACHE}/flutter-${RUNNER_OS}-${FAKE_FLUTTER_VERISON}-${RUNNER_ARCH}"
+
   # Configure pub to use a fixed cache directory.
   FLUTTER_PUB_CACHE="${RUNNER_TEMP}/pub-cache"
   echo "PUB_CACHE=${FLUTTER_PUB_CACHE}" >>$GITHUB_ENV
