@@ -10,9 +10,10 @@ FAKE_FLUTTER_VERISON="3.24.0"
 rm -rf flutter
 
 # Clone the Flutter SDK.
-git clone --depth 1 --branch \
-  try-crash-driver-ci \
-  https://github.com/matanlurey/flutter
+git clone https://github.com/flutter/flutter
+# git clone --depth 1 --branch \
+#    try-crash-driver-ci \
+#    https://github.com/matanlurey/flutter
 
 # If we are running on Github actions, we have extra steps.
 if [ -n "$GITHUB_ACTIONS" ]; then
