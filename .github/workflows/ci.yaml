@@ -55,12 +55,14 @@ jobs:
           arch: "x86_64"
           target: ${{ matrix.target }}
           script: |
+            echo "Starting logcat..."
             adb logcat -c
-            adb logcat > logcat.log &
+            nohup adb logcat > logcat.log &
+            echo "Running tests..."
             SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
       - name: Upload Logcat
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: logcat-${{ matrix.api-level }}-${{ matrix.target }}-${{ runner.os }}
-          path: logcat.log
+          path: flutter/logcat.log
