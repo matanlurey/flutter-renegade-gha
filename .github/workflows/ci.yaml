@@ -15,11 +15,17 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         api-level: [34, 35]
+        os: [ubuntu-latest, macos-latest]
+        target: [default, google_apis]
+        exclude:
+          # Only google_apis is supported for API v35 for now.
+          - api-level: 35
+            target: default
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,7 +33,8 @@ jobs:
         with:
           distribution: "zulu"
           java-version: 21
-      - name: Enable Hardware Acceleration
+      - name: Enable Hardware Acceleration on Linux
+        if: runner.os == 'Linux'
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -46,5 +53,14 @@ jobs:
           api-level: ${{ matrix.api-level }}
           working-directory: flutter
           arch: "x86_64"
-          target: google_apis
-          script: SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
+          target: ${{ matrix.target }}
+          script: |
+            adb logcat -c
+            adb logcat > logcat.log &
+            SHARD=flutter_driver_android bin/cache/dart-sdk/bin/dart dev/bots/test.dart
+      - name: Upload Logcat
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: logcat-${{ matrix.api-level }}-${{ matrix.target }}-${{ runner.os }}
+          path: logcat.log
