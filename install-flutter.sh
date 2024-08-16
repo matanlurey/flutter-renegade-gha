@@ -34,11 +34,13 @@ flutter --version
 # change flutterVersion": "0.0.0-unknown"
 #     to flutterVersion": "$FAKE_FLUTTER_VERISON"
 
-# On MacoOS, we need to use sed -i '' instead of sed -i.
-if [ "$(uname)" = "Darwin" ]; then
-  sed -i '' "s/0.0.0-unknown/${FAKE_FLUTTER_VERISON}/g" ./flutter/bin/cache/flutter.version.json
-else
-  sed -i "s/0.0.0-unknown/${FAKE_FLUTTER_VERISON}/g" ./flutter/bin/cache/flutter.version.json
+if [ -f "./flutter/bin/cache/flutter.version.json" ]; then
+  # On MacoOS, we need to use sed -i '' instead of sed -i.
+  if [ "$(uname)" = "Darwin" ]; then
+    sed -i '' "s/0.0.0-unknown/${FAKE_FLUTTER_VERISON}/g" ./flutter/bin/cache/flutter.version.json
+  else
+    sed -i "s/0.0.0-unknown/${FAKE_FLUTTER_VERISON}/g" ./flutter/bin/cache/flutter.version.json
+  fi
 fi
 
 # Download dependencies.
