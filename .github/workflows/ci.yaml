@@ -22,6 +22,10 @@ jobs:
         api-level: [34, 35]
         os: [ubuntu-latest, macos-latest]
         target: [default, google_apis]
+        exclude:
+          # Only google_apis is supported for API v35 for now.
+          - api-level: 35
+            target: default
     steps:
       - name: Checkout
         uses: actions/checkout@v4
